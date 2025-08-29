@@ -2,7 +2,7 @@ Myntra Clone
 
 A modern e-commerce web application built with React, Redux, Firebase Authentication, and TailwindCSS, replicating core functionalities of Myntra. This project demonstrates a full-featured shopping experience including product browsing, search, cart management, and secure phone-based login/signup.
 
-NOTE : Please use '+915555555555' as phone number and '555555' as OTP
+NOTE : Please use '+915555555555' as phone number and '555555' as OTP for login and signup
 
 Features : 
 
