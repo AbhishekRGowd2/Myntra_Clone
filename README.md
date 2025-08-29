@@ -116,9 +116,14 @@ Search Functionality :
 Product Details : 
 <img width="1907" height="890" alt="image" src="https://github.com/user-attachments/assets/a521a661-3183-47f6-a212-2073e11b6ac3" />
 Login and Otp : 
+
 <img width="692" height="737" alt="image" src="https://github.com/user-attachments/assets/6d0a2b79-96de-4bbd-9fc1-40f62abbf9ff" />
+
+
 Cart : 
 <img width="1057" height="400" alt="image" src="https://github.com/user-attachments/assets/e4635f48-7f76-422b-9de7-5c8b02fe35e0" />
+
+
 Extras : 
 <img width="760" height="151" alt="image" src="https://github.com/user-attachments/assets/189f0b80-a86a-4125-bcd4-970e5e8b4f85" />
 
