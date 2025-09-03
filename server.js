@@ -30,7 +30,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://myntra-clone-ulcv.onrender.com/",
+        url: "https://myntra-clone-ulcv.onrender.com/api",
       },
     ],
   },
