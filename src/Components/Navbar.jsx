@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { User, ShoppingCart } from "lucide-react";
 import { logoutUser } from "../features/auth/authSlice"; // updated import
+import { fetchCart, clearCart } from "../features/cart/cartSlice";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -24,8 +25,16 @@ const Navbar = () => {
     };
   }, []);
 
+    // ✅ Fetch cart when Navbar mounts if user exists
+    useEffect(() => {
+      if (user?.uid) {
+        dispatch(fetchCart(user.uid));
+      }
+    }, [user, dispatch]);
+
   const handleLogout = async () => {
     await dispatch(logoutUser());
+    dispatch(clearCart()); 
     setDropdownOpen(false);
   };
 

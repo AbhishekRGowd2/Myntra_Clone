@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { auth } from "../firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "../features/auth/authSlice";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -9,14 +11,13 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [confirmationResult, setConfirmationResult] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const configureCaptcha = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
         size: "invisible",
-        callback: () => {
-          console.log("Recaptcha verified");
-        },
+        callback: () => console.log("Recaptcha verified"),
       });
     }
   };
@@ -44,7 +45,7 @@ const Login = () => {
     try {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
-      console.log("User signed in successfully", user);
+      dispatch(setUser(user));
       navigate("/");
     } catch (error) {
       console.error("Error verifying OTP:", error);
@@ -53,13 +54,25 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-blue-100 flex items-center justify-center px-4">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-pink-600 text-center">Phone Login</h2>
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-12">
+      <div className=" rounded-lg shadow-lg flex flex-col md:flex-row w-full max-w-6xl h-[700px] overflow-hidden bg-pink-100 border">
+        {/* Left image 65% */}
+        <div className="hidden md:block md:w-2/3 p-4  border-4 border-transparent">
+          <img
+            src="/myntra-banner2.jpg"
+            alt="Login Visual"
+            className="object-contain h-full w-full rounded-lg"
+          />
+        </div>
 
-        <form onSubmit={otpSent ? verifyOtp : sendOtp} className="space-y-4">
-          {!otpSent && (
-            <>
+        {/* Right form 35% */}
+        <div className="w-full md:w-1/3 p-8 flex flex-col justify-center items-center md:items-start bg-pink-100">
+          <h2 className="text-3xl font-bold mb-6 text-pink-600 text-center md:text-left">
+            Phone Login
+          </h2>
+
+          <form onSubmit={otpSent ? verifyOtp : sendOtp} className="space-y-4">
+            {!otpSent && (
               <input
                 type="tel"
                 placeholder="Phone Number (e.g. +919876543210)"
@@ -68,11 +81,9 @@ const Login = () => {
                 onChange={(e) => setPhone(e.target.value)}
                 required
               />
-            </>
-          )}
+            )}
 
-          {otpSent && (
-            <>
+            {otpSent && (
               <input
                 type="text"
                 placeholder="Enter OTP"
@@ -81,19 +92,18 @@ const Login = () => {
                 onChange={(e) => setOtp(e.target.value)}
                 required
               />
-            </>
-          )}
+            )}
 
-          <button
-            type="submit"
-            className="bg-pink-600 text-white w-full py-3 rounded hover:bg-pink-700 transition"
-          >
-            {otpSent ? "Verify OTP" : "Send OTP"}
-          </button>
+            <button
+              type="submit"
+              className="bg-pink-600 text-white w-full py-3 rounded hover:bg-pink-700 transition"
+            >
+              {otpSent ? "Verify OTP" : "Send OTP"}
+            </button>
 
-          {/* Required for Firebase Recaptcha */}
-          <div id="recaptcha-container" />
-        </form>
+            <div id="recaptcha-container" />
+          </form>
+        </div>
       </div>
     </div>
   );

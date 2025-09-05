@@ -50,43 +50,57 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-blue-100 flex items-center justify-center px-4">
-      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-pink-600 text-center">Sign Up</h2>
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4 py-12">
+      <div className="rounded-lg shadow-lg flex flex-col md:flex-row w-full max-w-6xl h-[700px] overflow-hidden bg-pink-100 border">
+        {/* Left image 65% */}
+        <div className="hidden md:block md:w-2/3 p-4 border-4 border-transparent">
+          <img
+            src="/myntra-banner2.jpg"
+            alt="Signup Visual"
+            className="object-contain h-full w-full rounded-lg"
+          />
+        </div>
 
-        <form onSubmit={otpSent ? verifyOtp : sendOtp} className="space-y-4">
-          {!otpSent && (
-            <input
-              type="tel"
-              placeholder="Phone Number (e.g. +919876543210)"
-              className="border border-gray-300 p-3 w-full rounded"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          )}
+        {/* Right form 35% */}
+        <div className="w-full md:w-1/3 p-8 flex flex-col justify-center items-center md:items-start bg-pink-100">
+          <h2 className="text-3xl font-bold mb-6 text-pink-600 text-center md:text-left">
+            Sign Up
+          </h2>
 
-          {otpSent && (
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              className="border border-gray-300 p-3 w-full rounded"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
-          )}
+          <form onSubmit={otpSent ? verifyOtp : sendOtp} className="space-y-4 w-full">
+            {!otpSent && (
+              <input
+                type="tel"
+                placeholder="Phone Number (e.g. +919876543210)"
+                className="border border-gray-300 p-3 w-full rounded"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            )}
 
-          <button
-            type="submit"
-            className="bg-pink-600 text-white w-full py-3 rounded hover:bg-pink-700 transition"
-          >
-            {otpSent ? "Verify OTP" : "Send OTP"}
-          </button>
+            {otpSent && (
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                className="border border-gray-300 p-3 w-full rounded"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+            )}
 
-          {/* Required for Firebase Recaptcha */}
-          <div id="recaptcha-container" />
-        </form>
+            <button
+              type="submit"
+              className="bg-pink-600 text-white w-full py-3 rounded hover:bg-pink-700 transition"
+            >
+              {otpSent ? "Verify OTP" : "Send OTP"}
+            </button>
+
+            {/* Required for Firebase Recaptcha */}
+            <div id="recaptcha-container" />
+          </form>
+        </div>
       </div>
     </div>
   );

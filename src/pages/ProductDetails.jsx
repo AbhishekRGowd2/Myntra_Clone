@@ -1,41 +1,91 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart, incrementQuantity, decrementQuantity } from "../features/cart/cartSlice";
+import { fetchProductById } from "../features/products/productSlice";
+import {
+  fetchCart,
+  addToCartAPI,
+  updateCartAPI,
+  removeFromCartAPI,
+  addToCartLocal,
+  updateCartLocal,
+  removeFromCartLocal
+} from "../features/cart/cartSlice";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
-
 const ProductDetails = () => {
   const { id } = useParams();
-  const { products } = useSelector((state) => state.product);
-  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-
-  const product = products.find((p) => p.id === parseInt(id));
-  if (!product) return <p className="p-10 text-center text-lg">Loading...</p>;
-
-
+  const { selectedProduct: product, status } = useSelector((state) => state.product);
+  const { user } = useSelector((state) => state.auth);
   const cartItem = useSelector((state) =>
-    state.cart.items.find((item) => item.id === product.id)
-  );
+  state.cart.items.find((item) => item.product.id === parseInt(id))
+);
 
-  const handleIncrement = () => dispatch(incrementQuantity(product.id));
-  const handleDecrement = () => dispatch(decrementQuantity(product.id));
 
-  const handleAddToCart = () => {
+  // Fetch product on mount
+  useEffect(() => {
+    dispatch(fetchProductById(id));
+  }, [dispatch, id]);
+
+  // Fetch cart if user is logged in
+  useEffect(() => {
+    if (user) {
+      dispatch(fetchCart(user.uid));
+    }
+  }, [user, dispatch]);
+
+  if (status === "loading" || !product) {
+    return <p className="p-10 text-center text-lg">Loading...</p>;
+  }
+
+  const handleIncrement = async () => {
     if (!user) return navigate("/login");
-    dispatch(addToCart(product));
+
+    if (cartItem) {
+      await dispatch(updateCartAPI({
+        userId: user.uid,
+        productId: product.id,
+        quantity: cartItem.quantity + 1,
+      }));
+      dispatch(updateCartLocal({ productId: product.id, quantity: cartItem.quantity + 1 }));
+    } else {
+      handleAddToCart();
+    }
+  };
+
+  const handleDecrement = async () => {
+    if (!user) return navigate("/login");
+
+    if (!cartItem) return;
+
+    if (cartItem.quantity > 1) {
+      await dispatch(updateCartAPI({
+        userId: user.uid,
+        productId: product.id,
+        quantity: cartItem.quantity - 1,
+      }));
+      dispatch(updateCartLocal({ productId: product.id, quantity: cartItem.quantity - 1 }));
+    } else {
+      await dispatch(removeFromCartAPI({ userId: user.uid, productId: product.id }));
+      dispatch(removeFromCartLocal(product.id));
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!user) return navigate("/login");
+  
+    // Only call the API; the fulfilled case in slice will update the state
+    await dispatch(addToCartAPI({ userId: user.uid, product }));
   };
 
   return (
     <div className="bg-gray-50 min-h-screen">
       <Navbar />
 
-      {/* Main Content */}
       <div className="max-w-6xl mx-auto mt-6 mb-10 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 flex flex-col md:flex-row gap-10">
           {/* Image */}
@@ -53,7 +103,6 @@ const ProductDetails = () => {
               <h1 className="text-3xl font-bold text-gray-800">{product.title}</h1>
               <p className="text-md text-gray-500 mt-1">by {product.brand}</p>
 
-              {/* Price & Discount */}
               <div className="mt-4 flex items-center gap-4">
                 <span className="text-2xl font-bold text-pink-600">₹{product.price}</span>
                 {product.discountPercentage && (
@@ -61,10 +110,8 @@ const ProductDetails = () => {
                 )}
               </div>
 
-              {/* Description */}
               <p className="mt-6 text-gray-700">{product.description}</p>
 
-              {/* SKU / Barcode / Category */}
               <div className="mt-4 text-sm text-gray-600 space-y-1">
                 <p><strong>SKU:</strong> {product.sku}</p>
                 <p><strong>Category:</strong> {product.category}</p>
@@ -73,13 +120,11 @@ const ProductDetails = () => {
                 <p><strong>Minimum Order Qty:</strong> {product.minimumOrderQuantity}</p>
               </div>
 
-              {/* Dimensions */}
               <div className="mt-4 text-sm text-gray-600">
                 <p><strong>Dimensions:</strong> {product.dimensions?.width}W × {product.dimensions?.height}H × {product.dimensions?.depth}D</p>
                 <p><strong>Weight:</strong> {product.weight}g</p>
               </div>
 
-              {/* Warranty & Shipping */}
               <div className="mt-4 text-sm text-gray-600 space-y-1">
                 <p><strong>Warranty:</strong> {product.warrantyInformation}</p>
                 <p><strong>Shipping:</strong> {product.shippingInformation}</p>
@@ -87,7 +132,6 @@ const ProductDetails = () => {
                 <p><strong>Return Policy:</strong> {product.returnPolicy}</p>
               </div>
 
-              {/* QR Code */}
               {product.meta?.qrCode && (
                 <div className="mt-4">
                   <img src={product.meta.qrCode} alt="QR Code" className="w-24" />
@@ -100,19 +144,9 @@ const ProductDetails = () => {
               <div className="mt-6">
                 <div className="flex items-center gap-4">
                   <span className="text-green-600 font-bold">Added</span>
-                  <button
-                    onClick={handleDecrement}
-                    className="px-2 py-1 bg-gray-200 text-black rounded"
-                  >
-                    -
-                  </button>
+                  <button onClick={handleDecrement} className="px-2 py-1 bg-gray-200 text-black rounded">-</button>
                   <span className="text-black">{cartItem.quantity}</span>
-                  <button
-                    onClick={handleIncrement}
-                    className="px-2 py-1 bg-gray-200 text-black rounded"
-                  >
-                    +
-                  </button>
+                  <button onClick={handleIncrement} className="px-2 py-1 bg-gray-200 text-black rounded">+</button>
                 </div>
                 <button
                   className="mt-4 bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded transition"
@@ -129,11 +163,10 @@ const ProductDetails = () => {
                 Add to Cart
               </button>
             )}
-
           </div>
         </div>
 
-        {/* Reviews Section */}
+        {/* Reviews */}
         <div className="mt-10 bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
           {product.reviews?.length > 0 ? (
