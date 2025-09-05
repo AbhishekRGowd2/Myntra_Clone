@@ -35,25 +35,6 @@ Deployed: https://myntra-clone-ulcv.onrender.com/api/docs
 
 CORS enabled
 
-📂 Project Structure
-├── config/
-│   └── db.js              # Database connection
-├── controller/
-│   ├── cartController.js  # Cart operations
-│   └── productController.js # Product operations
-├── models/
-│   ├── cart.js            # Cart schema
-│   └── product.js         # Product schema
-├── routes/
-│   ├── cartRoutes.js      # Cart routes
-│   └── productRoutes.js   # Product routes
-├── seed/
-│   └── seedProducts.js    # Product seeding from DummyJSON
-├── tests/
-│   ├── cartController.test.js
-│   └── productController.test.js
-├── server.js              # Express app entry point
-└── package.json
 
 ⚙️ Setup Instructions
 
