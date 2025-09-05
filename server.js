@@ -30,7 +30,10 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: "https://myntra-clone-ulcv.onrender.com/api",
+        url: "http://localhost:5000/api",
+      },,
+      {
+        url: "https://myntra-clone-ulcv.onrender.com/api", // deployed on Render
       },
     ],
   },
@@ -40,6 +43,9 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
+app.get("/", (req, res) => {
+  res.send("✅ Myntra Clone Backend is running!");
+});
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 app.use('/api/products', productRoutes);
