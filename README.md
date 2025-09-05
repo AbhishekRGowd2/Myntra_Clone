@@ -105,10 +105,5 @@ Sign up or login using your phone number.
 
 Access the cart to view total and proceed to checkout.
 
-Screenshots : Home Page : image Browse Products : image Search Functionality : image Product Details : image Login and Otp :
 
-image
-Cart : image
-
-Extras : image
 
