@@ -8,7 +8,7 @@ import Cart from "./pages/Cart";
 import ProductDetails from "./pages/ProductDetails";
 import { useDispatch, useSelector } from "react-redux";
 import { auth } from "./firebase";
-import { setUser } from "./features/auth/authSlice.js"; // 👈 Add this
+import { setUser } from "./features/auth/authSlice.js"; 
 import './style.css';
 
 function App() {
